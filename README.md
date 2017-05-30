@@ -66,7 +66,7 @@ The method `RunInitializationsAsync` runs ALL initializations tasks (the ones yo
 
 While your initializations tasks are running your application can start receiving requests: all requests will get a 503 (Service Unavailable) until all initialization tasks are completed. Once all are completed requests will be processed in a normal way.
 
-This allows you run initialization tasks without blocking requests.
+This allows to start your server application fast and start to serving requests (ok, they will receive a 503 but in a future this behavior will be more customizable).
 
 ### Changing initialization response
 
