@@ -2,6 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp1.1</TargetFramework>
+    <Version>0.1.0</Version>
+    <Description>AspNet Core Initializer Middleware</Description>
+    <Authors>Eiximenis</Authors>
+    <Company />
+    <PackageProjectUrl>https://github.com/eiximenis/core-initializer</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/eiximenis/core-initializer</RepositoryUrl>
+    <Product>LoCrestia.AspNetCore.Initializer (aka core-initializer)</Product>
   </PropertyGroup>
 
   <ItemGroup>

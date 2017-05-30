@@ -57,7 +57,11 @@ namespace Initializer.DemoWeb
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
 
-            app.RunInitializationsAsync().ConfigureAwait(false);
+            app.RunInitializationsAsync(options =>
+            {
+                options.ErrorText = "Wait a moment... we are doing some needed stuff";
+                options.AddTask(async () => await Task.Delay(10000));
+            }).ConfigureAwait(false);
 
         }
     }
