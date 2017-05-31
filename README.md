@@ -87,6 +87,12 @@ Once you have the class created you simply call the generic version of the `AddT
 options.AddTask<MyCustomTask>();
 ```
 
+For this to work you must register the task class (`MyCustomTask`) to the DI system (in the `ConfigureServices` method)
+
+```
+services.AddTransient<MyCustomTask>();
+```
+
 ## Running the initialization steps
 
 The extension method `RunInitializationsAsync` of the `IApplicationBuilder` runs ALL initializations tasks. This method do not accept parameters: 
