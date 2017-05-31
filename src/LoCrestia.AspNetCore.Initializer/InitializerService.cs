@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,18 +8,39 @@ namespace LoCrestia.AspNetCore.Initializer
 {
     public class InitializerService : IInitializerService
     {
-        public InitializerOptions Options { get; }
+        private readonly InitializationTasksOptions _options;
+        private readonly IServiceProvider _serviceProvider;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
 
-        public InitializerService(InitializerOptions options) => Options = options;
+        public InitializerService(InitializationTasksOptions options, IServiceProvider sp, IServiceScopeFactory scopeFactory)
+        {
+            _serviceProvider = sp;
+            _serviceScopeFactory = scopeFactory;
+            _options = options;
+        }
+
+        public bool HasFinished { get; private set; }
 
         public async Task InitAsync()
         {
-            foreach (var task in Options.Tasks)
+            foreach (var task in _options.Tasks)
             {
-                await task.Invoke();
+                try
+                {
+                    await task.RunAsync();
+                }
+                catch
+                {
+                    task.MarkAsFailed();
+                }
+
+                if (!task.ContinueOnError && task.HasError)
+                {
+                    break;
+                }
             }
 
-            Options.FinishInitialization();
+            HasFinished = true;
         }
     }
 }

@@ -27,6 +27,15 @@ namespace Initializer.DemoWeb
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<MyCustomTask>();
+            // Add initialization Tasks
+            services.AddInitTasks(options =>
+            {
+                options.AddTask(async () => Task.Delay(10000)).ContinueOnError();
+                options.AddTask<MyCustomTask>();
+            });
+            
+
             // Add framework services.
             services.AddMvc();
         }
@@ -57,12 +66,7 @@ namespace Initializer.DemoWeb
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
 
-            app.RunInitializationsAsync(options =>
-            {
-                options.ErrorText = "Wait a moment... we are doing some needed stuff";
-                options.AddTask(async () => await Task.Delay(10000));
-            }).ConfigureAwait(false);
-
+            app.RunInitializationsAsync().ConfigureAwait(false);
         }
     }
 }

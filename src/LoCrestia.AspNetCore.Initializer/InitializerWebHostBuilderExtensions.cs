@@ -12,8 +12,7 @@ namespace Microsoft.AspNetCore.Hosting
             {
                 var options = new InitializerOptions();
                 optionsAction?.Invoke(options);
-                services.AddSingleton<IInitializerService>(new InitializerService(options));
-                services.AddSingleton<IStartupFilter>(new InitializerStartupFilter(options));
+                services.AddSingleton<IStartupFilter>(sp => new InitializerStartupFilter(sp, options));
             });
             return builder;
         }

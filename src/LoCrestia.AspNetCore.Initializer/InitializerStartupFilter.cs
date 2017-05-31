@@ -9,13 +9,18 @@ namespace LoCrestia.AspNetCore.Initializer
     public class InitializerStartupFilter : IStartupFilter
     {
         private readonly InitializerOptions _options;
-        public InitializerStartupFilter(InitializerOptions options) => _options = options;
-       
+        private readonly IServiceProvider _serviceProvider;
+        public InitializerStartupFilter(IServiceProvider serviceProvider, InitializerOptions options)
+        {
+            _options = options;
+            _serviceProvider = serviceProvider;
+        }
+
         public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next)
         {
             return app =>
             {
-                app.UseMiddleware<InitializerMiddleware>(_options);
+                app.UseMiddleware<InitializerMiddleware>(_options, _serviceProvider);
                 next(app);
             };
         }

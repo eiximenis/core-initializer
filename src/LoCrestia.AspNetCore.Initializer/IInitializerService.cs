@@ -7,7 +7,9 @@ namespace LoCrestia.AspNetCore.Initializer
 {
     public interface IInitializerService
     {
+        bool HasFinished { get; }
+
         Task InitAsync();
-        InitializerOptions Options { get; }
+
     }
 }

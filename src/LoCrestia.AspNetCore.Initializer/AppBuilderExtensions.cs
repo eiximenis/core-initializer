@@ -9,11 +9,9 @@ namespace Microsoft.AspNetCore.Builder
 {
     public static class AppBuilderExtensions
     {
-        public static async Task RunInitializationsAsync(this IApplicationBuilder app, Action<InitializerOptions> optionsAction = null)
+        public static async Task RunInitializationsAsync(this IApplicationBuilder app)
         {
             var svc = app.ApplicationServices.GetService(typeof(IInitializerService)) as IInitializerService;
-            var options = svc.Options;
-            optionsAction?.Invoke(options);
             await svc.InitAsync();
         }
 

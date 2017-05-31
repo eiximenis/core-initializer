@@ -14,10 +14,9 @@ namespace Initializer.DemoWeb
             var host = new WebHostBuilder()
                 .UseKestrel()
                 .UseInitializer(options =>
-                    {
-                        options.AddTask(async () => await Task.Delay(10000));
-                    } 
-                )
+                {
+                    options.ErrorText = "Doing some stuff";
+                })
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseIISIntegration()
                 .UseStartup<Startup>()

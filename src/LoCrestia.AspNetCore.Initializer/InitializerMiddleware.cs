@@ -10,17 +10,20 @@ namespace LoCrestia.AspNetCore.Initializer
     {
         private readonly RequestDelegate _next;
         private readonly InitializerOptions _options;
+        private readonly IServiceProvider _serviceProvider;
 
-        public InitializerMiddleware(RequestDelegate next, InitializerOptions options)
+        public InitializerMiddleware(RequestDelegate next, InitializerOptions options, IServiceProvider serviceProvider)
         {
             _next = next;
             _options = options;
-
+            _serviceProvider = serviceProvider;
         }
 
         public async Task Invoke(HttpContext context)
         {
-            if (_options.Ready)
+            var svc = _serviceProvider.GetService(typeof(IInitializerService)) as IInitializerService;
+
+            if (svc.HasFinished)
             {
                 await _next.Invoke(context);
             }
