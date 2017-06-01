@@ -6,12 +6,14 @@ namespace LoCrestia.AspNetCore.Initializer
     public interface IInitializationTasksOptions
     {
         IInitializationTaskSettings AddTask(Func<Task> task);
-        IInitializationTaskSettings AddTask<T>() where T : class;
+        IInitializationTaskSettings AddTask(string name, Func<Task> task);
+        IInitializationTaskSettings AddTask<T>(string name = null) where T : class;
     }
 
     public interface IInitializationTaskSettings
     {
         IInitializationTaskSettings CanBeSkipped();
         IInitializationTaskSettings ContinueOnError();
+        IInitializationTaskSettings ThrowOnError();
     }
 }

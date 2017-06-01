@@ -21,18 +21,26 @@ namespace LoCrestia.AspNetCore.Initializer
         public IEnumerable<IInitializationTask> Tasks => _tasks;
 
 
-
         public IInitializationTaskSettings AddTask(Func<Task> task)
         {
-            _lastTaskAdded = new ActionTask(task);
-            _tasks.Add(_lastTaskAdded);
+            return AddTask(null, task);
+        }
+
+        public IInitializationTaskSettings AddTask(string name, Func<Task> task)
+        {
+            var inittask = new ActionTask(task);
+            _tasks.Add(inittask);
+            inittask.Name = name ?? $"Func Task #{_tasks.Count}";
+            _lastTaskAdded = inittask;
             return this;
         }
 
-        public IInitializationTaskSettings AddTask<T>() where T : class
+        public IInitializationTaskSettings AddTask<T>(string name = null) where T : class
         {
-            _lastTaskAdded = new ObjectTask<T>(_serviceProvider);
-            _tasks.Add(_lastTaskAdded);
+            var inittask = new ObjectTask<T>(_serviceProvider);
+            _tasks.Add(inittask);
+            inittask.Name = name ?? $"Object Task #{_tasks.Count}";
+            _lastTaskAdded = inittask;
             return this;
         }
 
@@ -45,6 +53,12 @@ namespace LoCrestia.AspNetCore.Initializer
         public IInitializationTaskSettings ContinueOnError()
         {
             _lastTaskAdded.ContinueOnError = true;
+            return this;
+        }
+
+        public IInitializationTaskSettings ThrowOnError()
+        {
+            _lastTaskAdded.ThrowOnError = true;
             return this;
         }
 

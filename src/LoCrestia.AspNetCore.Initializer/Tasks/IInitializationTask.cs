@@ -10,9 +10,13 @@ namespace LoCrestia.AspNetCore.Initializer.Tasks
         TaskResultStatus Status { get; }
         bool CanBeSkipped { get; set; }
         bool ContinueOnError { get; set; }
+        bool ThrowOnError { get; set; }
         bool HasError { get; }
 
+        string Name { get; }
+        Exception Exception { get;  }
+
         Task RunAsync();
-        void MarkAsFailed();
+        void MarkAsFailed(Exception ex);
     }
 }

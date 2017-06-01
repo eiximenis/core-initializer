@@ -16,6 +16,7 @@ namespace Initializer.DemoWeb
                 .UseInitializer(options =>
                 {
                     options.ErrorText = "Doing some stuff";
+                    options.ResultPath = "/initresult";
                 })
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseIISIntegration()

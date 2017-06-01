@@ -20,11 +20,18 @@ You can also use `dotnet` cli if you prefer.
 
 # How to use
 
-Just add the `LoCrestia.AspNetCore.Initializer` package to your project (current version 0.1.0)
+Just add the `LoCrestia.AspNetCore.Initializer` package to your project (current version **0.2.0**)
 
 ```
 Install-Package LoCrestia.AspNetCore.Initializer
 ```
+
+#0.2.0 CHANGELOG
+
+- Changed how adding tasks (**breaking change**)
+- Support for class-based tasks
+- Error handling on tasks
+- Information endpoint
 
 ## Adding Core-Init
 
@@ -104,6 +111,41 @@ app.RunInitializationsAsync().ConfigureAwait(false);
 Usually this method is called at the end of `Configure` method of the `Startup` class.
 
 **Note:** You should not wait for the `RunInitializationsAsync` method to finish!
+
+### Handling errors
+
+If an exception happens during the execution of a initialization task, core-init allows two options:
+
+1. Continue with the next initialization task
+2. Stop the initialization process, but don't rethrow the exception. All pending tasks are not run.
+
+If you use `ContinueOnError()` when adding a task, core-init will run next task if an exception happens:
+
+```
+options.AddTask(async () => throw new Exception("foo")).ContinueOnError();
+```
+
+If you don't use `ContinueOnError()` and the initialization task has an exception, the initialization process stops.
+
+### Viewing the result of initialization
+
+When registering core-ini (in `Main` method) you can enter a URL that will return a JSON with the status of the initialization process:
+
+1. If Started or not
+2. Task running
+
+Once finished it will show the status of all tasks (run correctly, run with error or skipped). If there is an exception the exception details are also serialized.
+
+To set the endpoint use the property `ResultPath` of the options:
+
+```
+.UseInitializer(options =>
+{
+    options.ResultPath = "/initresult";
+})
+```
+
+If you set `ResultPath` to `null` the endpoint is disabled.
 
 ## Init Middleware
 

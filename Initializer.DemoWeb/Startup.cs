@@ -31,7 +31,8 @@ namespace Initializer.DemoWeb
             // Add initialization Tasks
             services.AddInitTasks(options =>
             {
-                options.AddTask(async () => Task.Delay(10000)).ContinueOnError();
+                options.AddTask(async () => throw new Exception("foo")).ContinueOnError();
+                options.AddTask(async () => throw new Exception("bar")).ThrowOnError();
                 options.AddTask<MyCustomTask>();
             });
             
