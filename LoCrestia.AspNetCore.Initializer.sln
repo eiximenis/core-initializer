@@ -1,11 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.6
+VisualStudioVersion = 15.0.26730.15
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoCrestia.AspNetCore.Initializer", "src\LoCrestia.AspNetCore.Initializer\LoCrestia.AspNetCore.Initializer.csproj", "{59FA25D1-7A68-4151-8FFA-0F65893F3E44}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoCrestia.AspNetCore.Initializer", "src\LoCrestia.AspNetCore.Initializer\LoCrestia.AspNetCore.Initializer.csproj", "{59FA25D1-7A68-4151-8FFA-0F65893F3E44}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Initializer.DemoWeb", "Initializer.DemoWeb\Initializer.DemoWeb.csproj", "{311C2487-B89D-4701-B543-285D2085F6C7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Initializer.DemoWeb", "Initializer.DemoWeb\Initializer.DemoWeb.csproj", "{311C2487-B89D-4701-B543-285D2085F6C7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Initializer.EFSeed", "samples\Initializer.EFSeed\Initializer.EFSeed.csproj", "{F43D56A2-57F3-4DD5-AC26-1B79DAB65FA9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoCrestia.AspNetCore.Initializer.EntityFrameworkCore", "src\LoCrestia.AspNetCore.Initializer.EntityFrameworkCore\LoCrestia.AspNetCore.Initializer.EntityFrameworkCore.csproj", "{DDFCE231-B817-45C2-9AAB-3CB806EBD7F0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,8 +25,19 @@ Global
 		{311C2487-B89D-4701-B543-285D2085F6C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{311C2487-B89D-4701-B543-285D2085F6C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{311C2487-B89D-4701-B543-285D2085F6C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F43D56A2-57F3-4DD5-AC26-1B79DAB65FA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F43D56A2-57F3-4DD5-AC26-1B79DAB65FA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F43D56A2-57F3-4DD5-AC26-1B79DAB65FA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F43D56A2-57F3-4DD5-AC26-1B79DAB65FA9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDFCE231-B817-45C2-9AAB-3CB806EBD7F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDFCE231-B817-45C2-9AAB-3CB806EBD7F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDFCE231-B817-45C2-9AAB-3CB806EBD7F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDFCE231-B817-45C2-9AAB-3CB806EBD7F0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0E1B89A5-A59E-4248-BDD8-6F5B16728C8C}
 	EndGlobalSection
 EndGlobal

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace LoCrestia.AspNetCore.Initializer
 {
-    public interface IInitializerService
+    public interface IStartupInitializerService
     {
 
         Task InitAsync();

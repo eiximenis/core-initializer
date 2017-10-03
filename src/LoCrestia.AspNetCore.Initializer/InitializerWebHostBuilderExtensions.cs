@@ -8,6 +8,12 @@ namespace Microsoft.AspNetCore.Hosting
     {
         public static IWebHostBuilder UseInitializer(this IWebHostBuilder builder, Action<InitializerOptions> optionsAction = null)
         {
+
+            builder.ConfigureServices(services =>
+            {
+                services.AddSingleton<IWebHostInitializerService, WebHostInitializerService>(sp => new WebHostInitializerService());
+            });
+
             builder.ConfigureServices(services =>
             {
                 var options = new InitializerOptions();

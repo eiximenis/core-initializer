@@ -11,7 +11,7 @@ namespace Microsoft.AspNetCore.Builder
     {
         public static async Task RunInitializationsAsync(this IApplicationBuilder app)
         {
-            var svc = app.ApplicationServices.GetService(typeof(IInitializerService)) as IInitializerService;
+            var svc = app.ApplicationServices.GetService(typeof(IStartupInitializerService)) as IStartupInitializerService;
             await svc.InitAsync();
         }
 
