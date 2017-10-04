@@ -18,20 +18,32 @@ namespace LoCrestia.AspNetCore.Initializer
         }
 
         private readonly List<TaskResult> _results;
-        public bool HasStarted { get; set; }
-        public bool HasFinished { get; set; }
+        private int _pendingServices;
+        public bool HasStarted => _pendingServices > 0;
+        public bool HasFinished => _pendingServices == 0;
         public IEnumerable<TaskResult> Results => _results;
+
+        public void Start()
+        {
+            _pendingServices++;
+        }
+
+        public void Stop()
+        {
+            _pendingServices--;
+        }
+
 
         public string Running { get; internal set; }
 
         public InitializerResult()
         {
             _results = new List<TaskResult>();
+            _pendingServices = 0;
         }
 
-        public void SetAllTasks(IEnumerable<IInitializationTask> tasks)
+        public void AddResultTasks(IEnumerable<IInitializationTask> tasks)
         {
-            _results.Clear();
             _results.AddRange(tasks.Select(t => new TaskResult()
             {
                 Name = t.Name,

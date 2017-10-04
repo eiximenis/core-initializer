@@ -19,15 +19,20 @@ namespace Microsoft.AspNetCore.Hosting
             return webHost;
         }
 
-
-        public static IWebHost AddPreBuildTasks(this IWebHost webHost, Action<IWebHostTasksOptions> optionsAction)
+        public static IWebHost RunInitTasks(this IWebHost webHost)
         {
+            var initService = webHost.Services.GetService<IInitializerService>() as InitializerService;
+            initService.Run().ConfigureAwait(false);
+            return webHost;
+        }
 
-            var initService = webHost.Services.GetRequiredService<IWebHostInitializerService>();
-
+        public static IWebHost RunInitTasks(this IWebHost webHost, Action<IWebHostTasksOptions> optionsAction)
+        {
+            var initService = webHost.Services.GetService<IInitializerService>() as InitializerService;
             var options = new WebHostTasksOptions(webHost);
             optionsAction?.Invoke(options);
-            initService.SetOptions(options);
+            initService.AddTasks(options);
+            initService.Run().ConfigureAwait(false);
             return webHost;
         }
     }

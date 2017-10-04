@@ -11,14 +11,15 @@ namespace Microsoft.Extensions.DependencyInjection
         public static void AddInitTasks(this IServiceCollection services, Action<InitializationTasksOptions> optionsAction)
         {
 
-            services.AddSingleton<IStartupInitializerService, StartupInitializerService>(sp =>
+            services.AddSingleton<IInitializerService, InitializerService>(sp =>
             {
-                var webHostinitSvc = sp.GetRequiredService<IWebHostInitializerService>();
-                var scopeFactory = sp.GetService<IServiceScopeFactory>();
+                var initSvc = new InitializerService();
                 var options = new InitializationTasksOptions(sp);
                 optionsAction?.Invoke(options);
-                return new StartupInitializerService(options, sp, scopeFactory, webHostinitSvc);
+                initSvc.AddTasks(options);
+                return initSvc;
             });
+
         }
     }
 }

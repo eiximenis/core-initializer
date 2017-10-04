@@ -38,7 +38,7 @@ namespace LoCrestia.AspNetCore.Initializer
 
             if (!_finished)
             {
-                var svc = _serviceProvider.GetService(typeof(IStartupInitializerService)) as IStartupInitializerService;
+                var svc = _serviceProvider.GetService(typeof(IInitializerService)) as IInitializerService;
                 if (svc.Result.HasFinished)
                 {
                     _finished = true;
@@ -60,7 +60,7 @@ namespace LoCrestia.AspNetCore.Initializer
 
         private async Task ProcessResultRequest(HttpContext context)
         {
-            var svc = _serviceProvider.GetService(typeof(IWebHostInitializerService)) as IWebHostInitializerService;
+            var svc = _serviceProvider.GetService(typeof(IInitializerService)) as IInitializerService;
             context.Response.StatusCode = (int)System.Net.HttpStatusCode.OK;
             context.Response.ContentType = "application/json";
             var message = Newtonsoft.Json.JsonConvert.SerializeObject(svc.Result);

@@ -1,12 +1,19 @@
 # Core-Init (one ASP.NET Core initializer)
 
+> **WE'VE MOVED TO NETCORE2!** :) Version 0.3.0 is a `netcoreapp2.0` 
+
 Sometimes in your ASP.NET Core projects you need to create some initialization steps (i. e. seed a DbContext). Usually this is done in the `Startup` class in a code like that:
 
 ```
 MyDbContextSeeder.SeedAsync(dbContext).Wait();
 ```
 
-This code works, but blocks all requests until the `SeedAsync` method finishes. Core-Init tries to help in those cases.
+This code works, but it has so many drawbacks:
+
+1. Your app don't start to process requests until the code of the `SeedAsync` method finishes
+2. Code of `Startup` class is executed when using some cli tools like `dotnet ef migrations`. This is not desired (i.e. you don't want to seed your DbContext every time you create a migration)
+
+Core-Init wants to help with this.
 
 # How to contribute
 
@@ -20,18 +27,18 @@ You can also use `dotnet` cli if you prefer.
 
 # How to use
 
-Just add the `LoCrestia.AspNetCore.Initializer` package to your project (current version **0.2.0**)
+Just add the `LoCrestia.AspNetCore.Initializer` package to your project (current version **0.3.0**)
 
 ```
 Install-Package LoCrestia.AspNetCore.Initializer
 ```
 
-#0.2.0 CHANGELOG
+#0.3.0 CHANGELOG
 
-- Changed how adding tasks (**breaking change**)
-- Support for class-based tasks
-- Error handling on tasks
-- Information endpoint
+- **breaking change**: Removed `IApplicationBuilder` extension method `RunInitializationsAsync()` used to launch the initialization tasks.
+- **breaking change**: The initialization tasks are launched using extension method `RunInitTasks` from `IWebHost`.
+- Support for tasks defined either in `Startup` class or in the `Main` method.
+- Support for tasks that use scoped objects.
 
 ## Adding Core-Init
 
@@ -56,7 +63,29 @@ services.AddInitTasks(options =>
 });
 ```
 
-## Initialization steps types
+You can also add initialization steps in the `Main` method, using the extension method `RunInitTasks`:
+
+```
+public static void Main(string[] args)
+{
+    BuildWebHost(args)
+        .RunInitTasks(opt =>
+        {
+            opt.AddTask<MyContext>("EF Seed", async (ctx) =>
+            {
+                ctx.Database.Migrate();
+                for (var i = 0; i < 1000; i++)
+                {
+                    ctx.MyEntities.Add(new MyEntity() { Name = $"Test {i}" });
+                }
+                await ctx.SaveChangesAsync();
+            });
+        })
+        .Run();
+}
+```
+
+## Initialization steps types. Functions
 
 Currently two supported types of initialization steps are supported: method-based and class-based.
 
@@ -65,6 +94,15 @@ The first ones are added using the `AddTask` and passing a `Func<Task>` which co
 ```
 options.AddTask(async () => Task.Delay(10000));
 ```
+
+If you use the `RunInitTasks` method you can use:
+
+* `AddTask<T>`: Which adds a Task that is a function that takes a parameter of type `T`. This parameter is resolved via DI. This method takes a `Func<T, Task>` as a parameter that contains the init task code.
+* `AddTask`: Which adds a Task that is a function that do not take parameters. This method takes a `Func<Task>` as a parameter that contains the init task code.
+
+There is no (currently) support for class-based tasks using `RunInitTasks`.
+
+## Initialization steps types. Class-based
 
 But you can create your own complex initialization steps by simply having one class with a method called `Run`:
 

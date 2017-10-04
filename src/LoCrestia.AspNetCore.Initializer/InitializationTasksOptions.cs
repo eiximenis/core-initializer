@@ -1,11 +1,12 @@
 ﻿using LoCrestia.AspNetCore.Initializer.Tasks;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace LoCrestia.AspNetCore.Initializer
 {
-    public class InitializationTasksOptions : IInitializationTasksOptions, IInitializationTaskSettings
+    public class InitializationTasksOptions : IInitializationTasksOptions, IInitializationTaskSettings, IEnumerable<IInitializationTask>
     {
         private readonly List<IInitializationTask> _tasks;
         private readonly IServiceProvider _serviceProvider;
@@ -18,7 +19,18 @@ namespace LoCrestia.AspNetCore.Initializer
             _lastTaskAdded = null;
         }
 
-        public IEnumerable<IInitializationTask> Tasks => _tasks;
+        public IEnumerator<IInitializationTask> GetEnumerator()
+        {
+            foreach (var task in _tasks)
+            {
+                yield return task;
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
 
 
         public IInitializationTaskSettings AddTask(Func<Task> task)

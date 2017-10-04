@@ -5,6 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore;
+using Initializer.EFSeed.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Initializer.EFSeed
 {
@@ -13,9 +15,18 @@ namespace Initializer.EFSeed
         public static void Main(string[] args)
         {
             BuildWebHost(args)
-                .AddPreBuildTasks(opt =>
+                .RunInitTasks(opt =>
                 {
-                    opt.AddTask("Test delay Task", () => Task.Delay(50000));
+                    opt.AddTask<MyContext>("EF Seed", async (ctx) =>
+                    {
+                        await Task.Delay(20000);
+                        ctx.Database.Migrate();
+                        for (var i = 0; i < 1000; i++)
+                        {
+                            ctx.MyEntities.Add(new MyEntity() { Name = $"Test {i}" });
+                        }
+                        await ctx.SaveChangesAsync();
+                    });
                 })
                 .Run();
         }

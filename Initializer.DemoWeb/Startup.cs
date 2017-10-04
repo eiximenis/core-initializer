@@ -67,7 +67,6 @@ namespace Initializer.DemoWeb
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
 
-            app.RunInitializationsAsync().ConfigureAwait(false);
         }
     }
 }

@@ -35,6 +35,15 @@ namespace Initializer.EFSeed
                     sqlOpt.MigrationsAssembly(typeof(Startup).GetTypeInfo().Assembly.GetName().Name);
                 });
             });
+
+            services.AddInitTasks(opt =>
+            {
+                opt.AddTask("Stupid Delay", () =>
+                {
+                    Console.WriteLine("Hoooo");
+                    return Task.Delay(20000);
+                });
+            });
             // Add framework services.
             services.AddMvc();
         }

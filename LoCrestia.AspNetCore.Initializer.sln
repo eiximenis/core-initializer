@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Initializer.DemoWeb", "Init
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Initializer.EFSeed", "samples\Initializer.EFSeed\Initializer.EFSeed.csproj", "{F43D56A2-57F3-4DD5-AC26-1B79DAB65FA9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoCrestia.AspNetCore.Initializer.EntityFrameworkCore", "src\LoCrestia.AspNetCore.Initializer.EntityFrameworkCore\LoCrestia.AspNetCore.Initializer.EntityFrameworkCore.csproj", "{DDFCE231-B817-45C2-9AAB-3CB806EBD7F0}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,10 +27,6 @@ Global
 		{F43D56A2-57F3-4DD5-AC26-1B79DAB65FA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F43D56A2-57F3-4DD5-AC26-1B79DAB65FA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F43D56A2-57F3-4DD5-AC26-1B79DAB65FA9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DDFCE231-B817-45C2-9AAB-3CB806EBD7F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DDFCE231-B817-45C2-9AAB-3CB806EBD7F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DDFCE231-B817-45C2-9AAB-3CB806EBD7F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DDFCE231-B817-45C2-9AAB-3CB806EBD7F0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

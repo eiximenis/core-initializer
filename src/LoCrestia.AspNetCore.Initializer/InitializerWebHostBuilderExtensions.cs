@@ -11,7 +11,7 @@ namespace Microsoft.AspNetCore.Hosting
 
             builder.ConfigureServices(services =>
             {
-                services.AddSingleton<IWebHostInitializerService, WebHostInitializerService>(sp => new WebHostInitializerService());
+                services.AddSingleton<IInitializerService, InitializerService>();
             });
 
             builder.ConfigureServices(services =>
@@ -22,5 +22,7 @@ namespace Microsoft.AspNetCore.Hosting
             });
             return builder;
         }
+
+
     }
 }

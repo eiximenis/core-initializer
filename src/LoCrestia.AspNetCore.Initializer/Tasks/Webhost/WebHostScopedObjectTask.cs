@@ -7,18 +7,21 @@ using System.Threading.Tasks;
 
 namespace LoCrestia.AspNetCore.Initializer.Tasks.Webhost
 {
-    public class WebHostActionTask : WebHostTaskBase
+    public class WebHostScopedObjectTask<T> : WebHostTaskBase
     {
-        private readonly Func<IServiceScope, Task> _action;
-        public WebHostActionTask(IWebHost webhost, Func<IServiceScope, Task> action) : base(webhost) => _action = action;
+        private readonly Func<T, Task> _action;
+
+        public WebHostScopedObjectTask(IWebHost webhost, Func<T, Task> action) : base(webhost) => _action = action;
 
         public async override Task RunAsync()
         {
             using (var scope = WebHost.Services.CreateScope())
             {
-                await _action(scope);
+                var param = scope.ServiceProvider.GetService<T>();
+                await _action(param);
                 Status = TaskResultStatus.Finished;
             }
         }
+
     }
 }

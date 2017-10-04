@@ -1,6 +1,7 @@
 ﻿using LoCrestia.AspNetCore.Initializer.Tasks;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,16 +9,38 @@ namespace LoCrestia.AspNetCore.Initializer
 {
     public class TasksRunner
     {
-        private readonly IEnumerable<IInitializationTask> _tasks;
-        public TasksRunner(IEnumerable<IInitializationTask> tasks)
+        private readonly List<IInitializationTask> _tasks;
+        private readonly object _syncObject;
+        public TasksRunner()
         {
-            _tasks = tasks;
+            _syncObject = new object();
+            _tasks = new List<IInitializationTask>();
+        }
+
+        public void AppendTasks(IEnumerable<IInitializationTask> additionalTasks)
+        {
+            lock (_syncObject)
+            {
+                foreach (var task in additionalTasks)
+                {
+                    _tasks.Add(task);
+                }
+            }
         }
 
         public async Task RunAll(InitializerResult result)
         {
-            foreach (var task in _tasks)
+            if (!_tasks.Any())
             {
+                return;
+            }
+
+            bool pending = true;
+            int idx = 0;
+            
+            while (pending)
+            {
+                var task = _tasks[idx];
                 try
                 {
                     result.Running = task.Name;
@@ -30,6 +53,12 @@ namespace LoCrestia.AspNetCore.Initializer
 
                 var stop = NeedsToStopAfterTask(task, result);
                 if (stop) { break; }
+ 
+                idx++;
+                lock (_syncObject)
+                {
+                    pending = idx < _tasks.Count;
+                }
             }
         }
 
@@ -40,8 +69,8 @@ namespace LoCrestia.AspNetCore.Initializer
             {
                 if (task.ThrowOnError)
                 {
-                    result.SetAllTasks(_tasks);
-                    result.HasFinished = true;
+                    result.AddResultTasks(_tasks);
+                    result.Stop();
                     result.Running = null;
                     throw task.Exception;
                 }
