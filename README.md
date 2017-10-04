@@ -140,15 +140,17 @@ services.AddTransient<MyCustomTask>();
 
 ## Running the initialization steps
 
-The extension method `RunInitializationsAsync` of the `IApplicationBuilder` runs ALL initializations tasks. This method do not accept parameters: 
+The extension method `RunInitTasks` of the `IWebHost` runs ALL initializations tasks.
 
 ```
-app.RunInitializationsAsync().ConfigureAwait(false);
+BuildWebHost(args)
+        .RunInitTasks()
+        .Run();
 ```
 
-Usually this method is called at the end of `Configure` method of the `Startup` class.
+If you added any initialization task using the `RunInitTasks` that accepts one parameter, you **don't need to call it again**. But if you added only tasks using `Startup` class need to call this version with no parameters.
 
-**Note:** You should not wait for the `RunInitializationsAsync` method to finish!
+> **RunInitTasks must be called once** with parameters (for also adding tasks) or without parameters. Don't call it multiple times!
 
 ### Handling errors
 
