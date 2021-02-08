@@ -1,12 +1,13 @@
 ﻿using LoCrestia.AspNetCore.Initializer;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System;
 
 namespace Microsoft.AspNetCore.Hosting
 {
     public static class InitializerWebHostBuilderExtensions
     {
-        public static IWebHostBuilder UseInitializer(this IWebHostBuilder builder, Action<InitializerOptions> optionsAction = null)
+        public static IHostBuilder UseInitializer(this IHostBuilder builder, Action<InitializerOptions> optionsAction = null)
         {
 
             builder.ConfigureServices(services =>

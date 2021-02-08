@@ -1,17 +1,14 @@
 # Core-Init (one ASP.NET Core initializer)
 
-> **WE'VE MOVED TO NETCORE2!** :) Version 0.3.0 is a `netcoreapp2.0` 
+> **WE'VE MOVED TO NET5!** :) Version 0.4.0 is a `net5.0` library!
 
-Sometimes in your ASP.NET Core projects you need to create some initialization steps (i. e. seed a DbContext). Usually this is done in the `Startup` class in a code like that:
+Sometimes in your ASP.NET Core projects you need to create some initialization steps like:
 
-```
-MyDbContextSeeder.SeedAsync(dbContext).Wait();
-```
+- Seeding the database
+- Waiting for some external resource to be available
+- Downloading needed stuff
 
-This code works, but it has so many drawbacks:
-
-1. Your app don't start to process requests until the code of the `SeedAsync` method finishes
-2. Code of `Startup` class is executed when using some cli tools like `dotnet ef migrations`. This is not desired (i.e. you don't want to seed your DbContext every time you create a migration)
+Most times this is done in the `Program.Main` method, before starting the host. However, this means that you cannot process any request until your init work is performed.
 
 Core-Init wants to help with this.
 
@@ -42,12 +39,12 @@ Install-Package LoCrestia.AspNetCore.Initializer
 
 ## Adding Core-Init
 
-You add Core-Init to your project in the `Main` method (found usually in `Program.cs`) when creating the `WebHostBuilder` object:
+You add Core-Init to your project in the `Main` method before creating the host:
 
-```
-var host = new WebHostBuilder()
-    .UseKestrel()
+```csharp
+CreateHostBuilder(args)
     .UseInitializer()
+    .Build().Run();
 ```
 
 The method `UseInitializer` adds Core-Init to the pipeline of the application and creates all needed infrastructure.
@@ -56,32 +53,39 @@ The method `UseInitializer` adds Core-Init to the pipeline of the application an
 
 You can add initialization steps in the `ConfigureServices` method of the `Startup` class, using the extension method `AddInitTasks`:
 
-```
+```csharp
 services.AddInitTasks(options =>
 {
     options.AddTask(async () => Task.Delay(10000));
 });
 ```
 
-You can also add initialization steps in the `Main` method, using the extension method `RunInitTasks`:
+You can also add initialization steps in the `Main` method, using the extension method `RunInitTasks`. This is a extension method over `IHost`:
 
-```
+```csharp
 public static void Main(string[] args)
 {
-    BuildWebHost(args)
-        .RunInitTasks(opt =>
+CreateHostBuilder(args)
+    .UseInitializer(options =>
+    {
+        options.ErrorText = "Doing some stuff";
+        options.ResultPath = "/initresult";
+    })
+    .Build()
+    .RunInitTasks(opt =>
+    {
+        opt.AddTask<MyContext>("EF Seed", async (ctx) =>
         {
-            opt.AddTask<MyContext>("EF Seed", async (ctx) =>
+            await Task.Delay(20000);
+            ctx.Database.Migrate();
+            for (var i = 0; i < 1000; i++)
             {
-                ctx.Database.Migrate();
-                for (var i = 0; i < 1000; i++)
-                {
-                    ctx.MyEntities.Add(new MyEntity() { Name = $"Test {i}" });
-                }
-                await ctx.SaveChangesAsync();
-            });
-        })
-        .Run();
+                ctx.MyEntities.Add(new MyEntity() { Name = $"Test {i}" });
+            }
+            await ctx.SaveChangesAsync();
+        });
+    })
+    .Run();
 }
 ```
 
@@ -91,7 +95,7 @@ Currently two supported types of initialization steps are supported: method-base
 
 The first ones are added using the `AddTask` and passing a `Func<Task>` which contains the code to run:
 
-```
+```csharo
 options.AddTask(async () => Task.Delay(10000));
 ```
 
@@ -106,7 +110,7 @@ There is no (currently) support for class-based tasks using `RunInitTasks`.
 
 But you can create your own complex initialization steps by simply having one class with a method called `Run`:
 
-```
+```csharp
 public class MyCustomTask
 {
     private readonly ILogger _logger;
@@ -128,13 +132,13 @@ The return value of mtehod Run is ignored **but the method `Run` can return a `T
 
 Once you have the class created you simply call the generic version of the `AddTask` method with no parameters:
 
-```
+```csharp
 options.AddTask<MyCustomTask>();
 ```
 
 For this to work you must register the task class (`MyCustomTask`) to the DI system (in the `ConfigureServices` method)
 
-```
+```csharp
 services.AddTransient<MyCustomTask>();
 ```
 
@@ -142,10 +146,11 @@ services.AddTransient<MyCustomTask>();
 
 The extension method `RunInitTasks` of the `IWebHost` runs ALL initializations tasks.
 
-```
-BuildWebHost(args)
-        .RunInitTasks()
-        .Run();
+```csharp
+CreateHostBuilder(args)
+    .UseInitializer()
+    .Build()
+    .RunInitTasks()
 ```
 
 If you added any initialization task using the `RunInitTasks` that accepts one parameter, you **don't need to call it again**. But if you added only tasks using `Startup` class need to call this version with no parameters.
@@ -211,4 +216,3 @@ By default all requests sent while initialization tasks are running receive a 50
 2. Cancelling initialization tasks
 3. ...
 
-**This is a preliminary version! Expect some breaking changes in following versions**

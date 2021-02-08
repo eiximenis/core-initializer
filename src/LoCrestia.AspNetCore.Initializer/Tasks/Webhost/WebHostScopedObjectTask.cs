@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,11 +12,11 @@ namespace LoCrestia.AspNetCore.Initializer.Tasks.Webhost
     {
         private readonly Func<T, Task> _action;
 
-        public WebHostScopedObjectTask(IWebHost webhost, Func<T, Task> action) : base(webhost) => _action = action;
+        public WebHostScopedObjectTask(IHost host, Func<T, Task> action) : base(host) => _action = action;
 
         public async override Task RunAsync()
         {
-            using (var scope = WebHost.Services.CreateScope())
+            using (var scope = Host.Services.CreateScope())
             {
                 var param = scope.ServiceProvider.GetService<T>();
                 await _action(param);

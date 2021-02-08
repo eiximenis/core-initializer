@@ -1,6 +1,7 @@
 ﻿using LoCrestia.AspNetCore.Initializer;
 using LoCrestia.AspNetCore.Initializer.Tasks.Webhost;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,30 +11,30 @@ namespace Microsoft.AspNetCore.Hosting
 {
     public static class IWebHostExtensions
     {
-        public static IWebHost RunPreBuildTask(this IWebHost webHost, Action<IWebHost> actionToDo)
+        public static IHost RunPreBuildTask(this IHost host, Action<IHost> actionToDo)
         {
-            using (var scope = webHost.Services.CreateScope())
+            using (var scope = host.Services.CreateScope())
             {
-                actionToDo?.Invoke(webHost);
+                actionToDo?.Invoke(host);
             }
-            return webHost;
+            return host;
         }
 
-        public static IWebHost RunInitTasks(this IWebHost webHost)
+        public static IHost RunInitTasks(this IHost host)
         {
-            var initService = webHost.Services.GetService<IInitializerService>() as InitializerService;
+            var initService = host.Services.GetService<IInitializerService>() as InitializerService;
             initService.Run().ConfigureAwait(false);
-            return webHost;
+            return host;
         }
 
-        public static IWebHost RunInitTasks(this IWebHost webHost, Action<IWebHostTasksOptions> optionsAction)
+        public static IHost RunInitTasks(this IHost host, Action<IWebHostTasksOptions> optionsAction)
         {
-            var initService = webHost.Services.GetService<IInitializerService>() as InitializerService;
-            var options = new WebHostTasksOptions(webHost);
+            var initService = host.Services.GetService<IInitializerService>() as InitializerService;
+            var options = new WebHostTasksOptions(host);
             optionsAction?.Invoke(options);
             initService.AddTasks(options);
             initService.Run().ConfigureAwait(false);
-            return webHost;
+            return host;
         }
     }
 }

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore;
 using Initializer.EFSeed.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 
 namespace Initializer.EFSeed
 {
@@ -14,7 +15,13 @@ namespace Initializer.EFSeed
     {
         public static void Main(string[] args)
         {
-            BuildWebHost(args)
+            CreateHostBuilder(args)
+                .UseInitializer(options =>
+                {
+                    options.ErrorText = "Doing some stuff";
+                    options.ResultPath = "/initresult";
+                })
+                .Build()
                 .RunInitTasks(opt =>
                 {
                     opt.AddTask<MyContext>("EF Seed", async (ctx) =>
@@ -32,14 +39,12 @@ namespace Initializer.EFSeed
         }
 
 
-        public static IWebHost BuildWebHost(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-            .UseInitializer(options =>
-            {
-                options.ErrorText = "Doing some stuff";
-                options.ResultPath = "/initresult";
-            })
-            .UseStartup<Startup>()
-            .Build();
+
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
     }
 }

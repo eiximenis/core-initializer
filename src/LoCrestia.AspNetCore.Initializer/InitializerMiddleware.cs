@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace LoCrestia.AspNetCore.Initializer
@@ -63,7 +64,7 @@ namespace LoCrestia.AspNetCore.Initializer
             var svc = _serviceProvider.GetService(typeof(IInitializerService)) as IInitializerService;
             context.Response.StatusCode = (int)System.Net.HttpStatusCode.OK;
             context.Response.ContentType = "application/json";
-            var message = Newtonsoft.Json.JsonConvert.SerializeObject(svc.Result);
+            var message = JsonSerializer.Serialize(svc.Result);
             await context.Response.WriteAsync(message);
         }
     }

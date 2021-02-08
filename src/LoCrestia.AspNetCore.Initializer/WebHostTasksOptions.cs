@@ -7,26 +7,27 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections;
+using Microsoft.Extensions.Hosting;
 
 namespace LoCrestia.AspNetCore.Initializer
 {
     public class WebHostTasksOptions : IWebHostTasksOptions, IInitializationTaskSettings, IEnumerable<IInitializationTask>
     {
-        private readonly IWebHost _webHost;
+        private readonly IHost _host;
         private readonly List<WebHostTaskBase> _tasks;
         public WebHostTaskBase _lastTaskAdded;
 
 
-        public WebHostTasksOptions(IWebHost webHost)
+        public WebHostTasksOptions(IHost host)
         {
-            _webHost = webHost;
+            _host = host;
             _tasks = new List<WebHostTaskBase>();
             _lastTaskAdded = null;
         }
 
         public IInitializationTaskSettings AddTask(string name, Func<IServiceScope, Task> task)
         {
-            var webHostTask = new WebHostActionTask(_webHost, task);
+            var webHostTask = new WebHostActionTask(_host, task);
             _tasks.Add(webHostTask);
             webHostTask.Name = name ?? $"WebHost task #{_tasks.Count}";
             _lastTaskAdded = webHostTask;
@@ -35,7 +36,7 @@ namespace LoCrestia.AspNetCore.Initializer
 
         public IInitializationTaskSettings AddTask<T>(string name, Func<T, Task> task)
         {
-            var webHostTask = new WebHostScopedObjectTask<T>(_webHost, task);
+            var webHostTask = new WebHostScopedObjectTask<T>(_host, task);
             _tasks.Add(webHostTask);
             webHostTask.Name = name ?? $"WebHostScopedObject task #{_tasks.Count}";
             _lastTaskAdded = webHostTask;

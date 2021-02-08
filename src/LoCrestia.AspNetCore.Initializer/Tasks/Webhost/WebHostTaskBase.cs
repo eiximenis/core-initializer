@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,9 +8,9 @@ namespace LoCrestia.AspNetCore.Initializer.Tasks.Webhost
 {
     public abstract class WebHostTaskBase : InitializationTaskBase
     {
-        protected IWebHost WebHost { get; }
+        protected IHost Host{ get; }
 
-        public WebHostTaskBase(IWebHost host) => WebHost = host;
+        public WebHostTaskBase(IHost host) => Host = host;
 
 
     }
